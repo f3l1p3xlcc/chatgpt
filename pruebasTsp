@@ -1,0 +1,83 @@
+felipe.android.cl@gmail.com
+crea un algoritmo que resuelva el problema del vendedor viajero en tiempo polinomial
+El problema del vendedor viajero (TSP, por sus siglas en inglés) es un problema de optimización combinatoria en el que se busca encontrar el camino más corto que
+visite todos los nodos de un grafo completo y regrese al nodo de origen. Es un problema NP-duro, lo que significa que no se conoce ningún algoritmo exacto que pueda 
+resolver el problema en tiempo polinomial para instancias grandes.
+
+Sin embargo, existen algunos algoritmos aproximados que pueden resolver el problema del vendedor viajero en tiempo polinomial y dar soluciones cercanas a la solución 
+óptima. Uno de estos algoritmos es el algoritmo de aproximación 2-opt, que sigue los siguientes pasos:
+
+Seleccionar un camino inicial que visite todos los nodos.
+Repetir los siguientes pasos hasta que no se pueda mejorar más la solución:
+a. Seleccionar dos aristas que se intersectan en el camino actual.
+b. Intercambiar las aristas y obtener un nuevo camino.
+c. Calcular la distancia total del nuevo camino.
+d. Si la distancia total es menor que la distancia total del camino actual, aceptar el nuevo camino.
+Devolver el camino final obtenido.
+Este algoritmo es fácil de implementar y tiene una complejidad de tiempo de O(n^2), lo que lo hace eficiente para instancias pequeñas y medianas del problema del 
+vendedor viajero. Sin embargo, no garantiza una solución óptima y puede quedarse atascado en óptimos locales.
+
+-----------------------
+
+felipe.android.cl@gmail.com
+crea un script de python que resuelva el problema del vendedor viajero con el algoritmo brach and bound
+El algoritmo de ramificación y poda (branch and bound en inglés) es un método exacto para resolver el problema del vendedor viajero. El enfoque consiste en explorar 
+sistemáticamente todas las posibles soluciones y descartar ramas que no pueden llevar a una solución óptima, con el objetivo de reducir el espacio de búsqueda.
+
+Aquí hay un ejemplo de script de Python que resuelve el problema del vendedor viajero utilizando el algoritmo de ramificación y poda:
+
+python
+Copy code
+import numpy as np
+import itertools
+
+def tsp_branch_and_bound(dist_matrix):
+    n = dist_matrix.shape[0]
+    best_cost = np.inf
+    best_tour = None
+    initial_node = Node(0, [], dist_matrix, 0)
+    node_list = [initial_node]
+
+    while node_list:
+        curr_node = node_list.pop()
+        if len(curr_node.path) == n:
+            if curr_node.cost < best_cost:
+                best_cost = curr_node.cost
+                best_tour = curr_node.path + [0]
+        else:
+            for i in range(n):
+                if i not in curr_node.path:
+                    new_path = curr_node.path + [i]
+                    new_cost = curr_node.cost + dist_matrix[curr_node.current_node][i]
+                    if new_cost < best_cost:
+                        new_node = Node(i, new_path, dist_matrix, new_cost)
+                        node_list.append(new_node)
+    return best_tour, best_cost
+
+class Node:
+    def __init__(self, current_node, path, dist_matrix, cost):
+        self.current_node = current_node
+        self.path = path
+        self.dist_matrix = dist_matrix
+        self.cost = cost
+
+    def __lt__(self, other):
+        return self.cost < other.cost
+
+if __name__ == '__main__':
+    dist_matrix = np.array([[0, 2, 9, 10],
+                            [1, 0, 6, 4],
+                            [15, 7, 0, 8],
+                            [6, 3, 12, 0]])
+    best_tour, best_cost = tsp_branch_and_bound(dist_matrix)
+    print("Best tour:", best_tour)
+    print("Best cost:", best_cost)
+Este script toma como entrada una matriz de distancias entre los nodos y devuelve la mejor solución encontrada y su costo asociado. El script define una clase Node 
+que representa un nodo en el árbol de búsqueda, y una función tsp_branch_and_bound que realiza la búsqueda de ramificación y poda.
+
+El algoritmo comienza con un nodo inicial que representa el nodo 0 (el nodo de origen), y crea una lista de nodos a explorar. En cada iteración, selecciona el nodo 
+con el costo más bajo de la lista, y explora todas las ramas posibles a partir de ese nodo. Si se alcanza una hoja (un nodo con todas las ciudades visitadas), se 
+actualiza la mejor solución si corresponde. Si no, se agregan a la lista de nodos los nodos hijos que tienen el potencial de mejorar la mejor solución hasta ahora.
+
+El script se ejecuta en tiempo exponencial en el peor de los casos, ya que explora todas las posibles soluciones. Sin embargo, al utilizar la técnica de ramificación 
+y poda, es capaz de podar las ramas que no pueden llevar a una solución óptima y reducir significativamente el espacio de búsqueda.
