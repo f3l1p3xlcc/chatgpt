@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+g = 9.81
+m1 = 60
+m2 = 70
+m3 = 80
+k1 = k3 = 50
+k2 = 100
+
+def d2x1(x1):
+    return (g - k1*x1/m1)
+
+
+def rungeKutta(h, x1, v1 ):
+
+    l1 = h * d2x1(x1)
+    kr1 = h * v1
+
+    l2 = h * d2x1(x1 + 0.5 * kr1)
+    kr2 = h * (v1 + 0.5 * l1)
+
+    l3 = h * d2x1(x1 + 0.5 * kr2)
+    kr3 = h * (v1 + 0.5 * l2 )
+
+    l4 = h * d2x1(x1 + kr3)
+    kr4 = h * (v1 + l3)
+
+    v1 = v1 + (1.0 / 6.0) * (l1 + 2 * l2 + 2 * l3 + l4)
+    x1 = x1 + (1.0 / 6.0) * (kr1 + 2 * kr2 + 2 * kr3 + l4)
+    print(' x1, v1 : ',x1 , v1)
+
+    return x1, v1
+
+if __name__ == '__main__':
+
+    x0 = 0
+    v0 = 0
+    x1 = 0
+    x2 = 0
+    x3 = 0
+    v1 = 0
+    h = 0.2
+
+    x1 = x0
+    v1 = v0
+    print(rungeKutta(h, x1,v1 ))
